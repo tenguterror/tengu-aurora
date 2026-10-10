@@ -1,0 +1,59 @@
+option.INFO=Tengu Aurora v2.0.0
+option.INFO.comment=Vibrant, cinematic shaders by Tengu. Built from scratch.
+value.INFO.0=by TenguTerror
+
+screen.LIGHTING=Lighting & Shadows
+screen.WORLD=Foliage & Weather
+screen.ATMOSPHERE=Sky, Clouds & Fog
+screen.WATER=Water
+screen.POST=Camera & Color
+
+profile.LOW=Low
+profile.MEDIUM=Medium
+profile.HIGH=High
+profile.ULTRA=Ultra
+
+option.shadowMapResolution=Shadow Resolution
+option.shadowDistance=Shadow Distance
+option.SHADOW_SOFTNESS=Shadow Softness
+option.sunPathRotation=Sun Path Angle
+option.SUN_BRIGHTNESS=Sunlight Brightness
+option.AMBIENT_BRIGHTNESS=Ambient Brightness
+option.BLOCKLIGHT_BRIGHTNESS=Torchlight Brightness
+option.EMISSIVE_STRENGTH=Glowing Block Strength
+option.GLOWING_ORES=Glowing Ores
+
+option.WAVING_PLANTS=Swaying Plants
+option.WAVE_SPEED=Wind Speed
+option.WAVE_AMOUNT=Wind Strength
+option.LAVA_WAVES=Lava Surface Motion
+option.RAIN_PUDDLES=Rain Puddles
+option.PUDDLE_AMOUNT=Puddle Amount
+
+option.VOLUMETRIC_FOG=Volumetric Fog & God Rays
+option.VL_STEPS=Fog Quality
+option.FOG_DENSITY=Overworld Fog Density
+option.GODRAY_STRENGTH=God Ray Strength
+option.CLOUDS=Volumetric Clouds
+option.CLOUD_COVERAGE=Cloud Coverage
+option.CLOUD_STEPS=Cloud Quality
+option.NETHER_FOG=Nether Fog Density
+option.END_FOG=End Fog Density
+
+option.WATER_WAVE_HEIGHT=Water Wave Height
+option.WATER_CAUSTICS=Underwater Caustics
+option.SSR=Screen-Space Reflections
+
+option.TAA=Temporal Anti-Aliasing
+option.SHARPEN=Sharpening
+option.BLOOM_STRENGTH=Bloom
+option.EXPOSURE=Exposure
+option.SATURATION=Saturation
+option.VIBRANCE=Vibrance
+option.CONTRAST=Contrast
+option.VIGNETTE_STRENGTH=Vignette
+option.AURORA=Aurora Borealis
+option.AURORA.comment=Northern lights on clear nights in snowy biomes.
+option.AURORA_EVERYWHERE=Aurora In All Biomes
+option.AURORA_BRIGHTNESS=Aurora Brightness
+option.SHORE_FOAM=Shore Foam

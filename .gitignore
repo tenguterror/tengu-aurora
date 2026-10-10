@@ -1,0 +1,4 @@
+# build output (the release zip is attached to GitHub releases instead)
+dist/
+__pycache__/
+*.pyc
