@@ -8,7 +8,7 @@ import zipfile
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SHADERS = os.path.join(ROOT, "shaders")
-VERSION = "2.0.0"
+VERSION = "2.1.0"
 PACK_NAME = f"Tengu-Aurora-v{VERSION}"
 
 DIMENSIONS = {"world0": "OVERWORLD", "world-1": "NETHER", "world1": "END"}

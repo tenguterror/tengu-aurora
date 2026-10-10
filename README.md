@@ -8,6 +8,14 @@ a smoky Nether lit by its lava sea, and an End that is a dark void under a livin
 
 **[Download the latest release](https://github.com/tenguterror/tengu-aurora/releases/latest)**
 
+## Shaders off vs on
+
+The same view of a jungle river at noon, a few seconds apart, with the shaders toggled off and on (Iris **K** key).
+
+| Vanilla (shaders off) | Tengu Aurora (shaders on) |
+|---|---|
+| ![Jungle river with shaders off](docs/screenshots/compare-shaders-off.jpg) | ![Jungle river with Tengu Aurora](docs/screenshots/compare-shaders-on.jpg) |
+
 ## Screenshots
 
 All taken in-game during the release test pass (2560×1440, Faithful 32x).
@@ -27,9 +35,9 @@ All taken in-game during the release test pass (2560×1440, Faithful 32x).
 
 ## Install
 
-1. Download `Tengu-Aurora-v2.0.0.zip` from the release page. Don't unzip it.
+1. Download `Tengu-Aurora-v2.1.0.zip` from the release page. Don't unzip it.
 2. Drop it into `.minecraft/shaderpacks`.
-3. In game: **Options → Video Settings → Shader Packs**, pick **Tengu-Aurora-v2.0.0**, press **Done**.
+3. In game: **Options → Video Settings → Shader Packs**, pick **Tengu-Aurora-v2.1.0**, press **Done**.
 
 You need Minecraft Java with **Iris** (Fabric). Sodium is recommended.
 
@@ -61,16 +69,21 @@ reviewed, and anything that looked wrong was fixed and re-shot.
 
 ### Measured on the dev rig
 
-Ryzen 7 9800X3D + RTX 5080, 2560 × 1440, **render distance 32**, Faithful 32x, v2.0.0.
-Readings from the in-game F3 overlay, hovering over a village with jungle and river in view.
-The active profile was confirmed in the Iris log before each run. Two samples were taken per scene.
+Ryzen 7 9800X3D + RTX 5080, 2560 × 1440, **render distance 32**, Faithful 32x, v2.1.0 (default
+anti-aliasing: TAA + FXAA, CAS sharpening 40). Readings from the in-game F3 overlay, hovering over a
+village with jungle and river in view. The active profile was confirmed in the Iris log before each
+run. Two samples were taken per scene.
 
 | Profile | Clear noon: FPS (p50 / p98) | Rainy sunset: FPS (p50 / p98) |
 |---|---|---|
-| Ultra | ~100 (94–95 / 60) | ~102 (101–104 / 58) |
-| High (default) | ~117 (118–121 / 71) | ~115 (109–120 / 67) |
-| Medium | ~134 (138–139 / 79) | ~127 (134 / 75–76) |
-| Low | ~145 (155–162 / 90) | ~138 (141–150 / 78–80) |
+| Ultra | ~98 (96–98 / 58) | ~97 (93–96 / 56) |
+| High (default) | ~119 (125–127 / 69–70) | ~111 (115–123 / 64–65) |
+| Medium | ~125 (132–133 / 75–77) | ~121 (124–125 / 69–70) |
+| Low | ~138 (154 / 85–86) | ~128 (138–139 / 75–76) |
+
+The v2.1.0 anti-aliasing costs about 2–7% compared with v2.0.0 (Ultra ~100, High ~117, Medium ~134,
+Low ~145 at clear noon). It's a fixed cost per frame, so it shows most on the lighter profiles.
+Switching **FXAA Edge Smoothing** off or setting **Sharpening (CAS)** to 0 gets most of it back.
 
 p50 is the median frame rate. p98 is the rate that 98% of frames beat, which is a good measure of
 how smooth it feels. During the Ultra run the GPU sat at about 80% load (≈255 W), so render
@@ -130,9 +143,9 @@ block, entity and dimension, instead of each object lighting itself.
 | `composite` (0) | Water body (refraction, absorption, foam, reflections), puddle reflections, underwater view. | Depth-based absorption is what makes shallow water clear turquoise and deep water dark blue. |
 | `composite1` | Volumetric fog and god rays, Nether smoke, End haze. | Ray-marched through the shadow map so light shafts are actually blocked by trees and terrain. |
 | `composite2` | Depth-aware blur of the fog, then applies it. | Lets the fog run at fewer steps without looking noisy or bleeding across edges. |
-| `composite3` | Temporal anti-aliasing. | Smooths edges and cleans up the remaining noise from fog and soft shadows. |
+| `composite3` | FXAA edge smoothing, then temporal anti-aliasing (Catmull-Rom history, variance clipping). | FXAA keeps edges smooth even while moving, when TAA has to drop its history. TAA blends jittered frames for clean edges and cleans up noise from fog and soft shadows. |
 | `composite4` | Bloom. | Gives bright things (sun, lava, glowstone) a soft glow. |
-| `final` | Sharpening, exposure, ACES tonemapping, colour grading, vignette. | Turns the HDR image into a filmic, vibrant final picture and undoes the softness TAA adds. |
+| `final` | Exposure, ACES tonemapping, colour grading, CAS sharpening, vignette. | Turns the HDR image into a filmic, vibrant final picture. Contrast Adaptive Sharpening (after AMD FidelityFX CAS) restores texture detail after TAA but backs off on high-contrast edges, so it doesn't bring the jaggies back. |
 
 ### Shared libraries (`shaders/lib/`)
 
@@ -181,7 +194,7 @@ Shader Pack Settings has Low / Medium / High / Ultra profiles (High is the defau
 - **Foliage & Weather**: plant sway, lava motion, rain puddles and puddle amount.
 - **Sky, Clouds & Fog**: fog and god rays, clouds, aurora brightness or "Aurora In All Biomes", Nether and End fog density.
 - **Water**: wave height, caustics, reflections, shore foam.
-- **Camera & Color**: TAA, sharpening, bloom, exposure, saturation, vibrance, contrast, vignette.
+- **Camera & Color**: TAA, FXAA edge smoothing, sharpening (CAS, 0–100), bloom, exposure, saturation, vibrance, contrast, vignette.
 
 ---
 

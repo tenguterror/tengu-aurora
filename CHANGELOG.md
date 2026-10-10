@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.1.0 (2026-10-10): sharper, smoother edges
+
+Fixes stair-stepped edges ("jaggies"), which were most visible on diagonal block edges against the sky.
+
+- **FXAA edge smoothing** now runs on every frame before TAA, so edges stay smooth while moving too.
+  New **FXAA Edge Smoothing** toggle under *Camera & Color* (on by default).
+- **Better TAA**: Catmull-Rom history sampling (less blur building up over time), variance clipping
+  instead of clamping (less ghosting), and stronger accumulation while standing still.
+- **CAS sharpening** (after AMD FidelityFX CAS) replaces the old unsharp mask and now runs after
+  tonemapping. The old sharpener re-cut the edges TAA had just smoothed; CAS backs off on
+  high-contrast edges. **Sharpening (CAS)** is now a 0–100 slider (default 40, 0 turns it off).
+- Cost on the dev rig: about 2–7% FPS depending on profile (see the README performance table).
+- Checked before/after in the overworld, snow, aurora, caves, the Nether and the End: smoother
+  edges everywhere, no changes to colour or lighting.
+
 ## 2.0.0 (2026-10-09): first release
 
 The first full release, signed off after an in-game test pass of every dimension and weather.

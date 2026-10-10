@@ -56,13 +56,14 @@ const float drynessHalflife = 900.0;
 
 // ---- Post ----
 #define TAA
+#define FXAA
 #define BLOOM_STRENGTH 1.0 //[0.0 0.25 0.5 0.75 1.0 1.25 1.5 2.0 3.0]
 #define EXPOSURE 1.0 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.75 2.0]
 #define SATURATION 1.12 //[0.8 0.9 1.0 1.05 1.1 1.12 1.15 1.18 1.2 1.3 1.4]
 #define VIBRANCE 1.12 //[0.8 0.9 1.0 1.1 1.12 1.2 1.3 1.4 1.5]
 #define CONTRAST 1.05 //[0.9 0.95 1.0 1.05 1.1 1.15 1.2]
 #define VIGNETTE_STRENGTH 0.35 //[0.0 0.1 0.2 0.3 0.35 0.4 0.5 0.6]
-#define SHARPEN 0.35 //[0.0 0.1 0.2 0.3 0.35 0.4 0.5 0.6 0.8]
+#define SHARPEN 40 //[0 10 20 30 40 50 60 70 80 90 100]
 
 // ---- Material IDs (block.properties) ----
 #define ID_GRASS 1

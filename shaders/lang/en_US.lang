@@ -1,4 +1,4 @@
-option.INFO=Tengu Aurora v2.0.0
+option.INFO=Tengu Aurora v2.1.0
 option.INFO.comment=Vibrant, cinematic shaders by Tengu. Built from scratch.
 value.INFO.0=by TenguTerror
 
@@ -45,7 +45,11 @@ option.WATER_CAUSTICS=Underwater Caustics
 option.SSR=Screen-Space Reflections
 
 option.TAA=Temporal Anti-Aliasing
-option.SHARPEN=Sharpening
+option.TAA.comment=Blends several jittered frames to smooth edges and clean up noise.
+option.FXAA=FXAA Edge Smoothing
+option.FXAA.comment=Smooths stair-stepped edges every frame, including while moving. Works together with TAA.
+option.SHARPEN=Sharpening (CAS)
+option.SHARPEN.comment=Contrast Adaptive Sharpening. Restores texture detail without re-cutting smoothed edges. 0 turns it off.
 option.BLOOM_STRENGTH=Bloom
 option.EXPOSURE=Exposure
 option.SATURATION=Saturation

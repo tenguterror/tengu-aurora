@@ -1,5 +1,5 @@
 // ============================================================================
-//  Final: sharpen, bloom, exposure, ACES tonemap, colour grade
+//  Final: bloom, exposure, ACES tonemap, colour grade, CAS sharpening
 // ============================================================================
 #include "/lib/settings.glsl"
 #include "/lib/common.glsl"
@@ -30,23 +30,9 @@ vec3 acesFitted(vec3 x) {
     return saturate((x * (a * x + b)) / (x * (c * x + d) + e));
 }
 
-void main() {
-    vec2 px = 1.0 / vec2(viewWidth, viewHeight);
-    vec3 col = texture(colortex3, uv).rgb;
-
-    // contrast-adaptive sharpen (undo TAA softness)
-    vec3 n = texture(colortex3, uv + vec2(px.x, 0.0)).rgb + texture(colortex3, uv - vec2(px.x, 0.0)).rgb
-           + texture(colortex3, uv + vec2(0.0, px.y)).rgb + texture(colortex3, uv - vec2(0.0, px.y)).rgb;
-    vec3 sharp = col + (col - n * 0.25) * SHARPEN;
-    col = mix(col, max(sharp, 0.0), saturate(1.0 - luma(col) * 0.5));
-
-    // bloom
-    vec3 bloom = texture(colortex5, uv).rgb;
-    col = mix(col, bloom, 0.075 * BLOOM_STRENGTH) + bloom * 0.025 * BLOOM_STRENGTH;
-
-    // exposure
-    float skyEye = float(eyeBrightnessSmooth.y) / 240.0;
+float getExposure() {
     #if defined OVERWORLD
+        float skyEye = float(eyeBrightnessSmooth.y) / 240.0;
         float dayF = smoothstep(-0.12, 0.22, sunDirW().y);
         float exposure = mix(3.2, 1.0, dayF);
         exposure = mix(3.4, exposure, smoothstep(0.0, 0.65, skyEye));
@@ -55,10 +41,23 @@ void main() {
     #else
         float exposure = 1.25;
     #endif
-    col *= exposure * EXPOSURE * 0.8;
+    return exposure * EXPOSURE * 0.8;
+}
+
+// everything up to the display image for one screen position (linear 0..1)
+vec3 graded(vec2 p, float exposure) {
+    vec3 col = texture(colortex3, p).rgb;
+
+    // bloom
+    vec3 bloom = texture(colortex5, p).rgb;
+    col = mix(col, bloom, 0.075 * BLOOM_STRENGTH) + bloom * 0.025 * BLOOM_STRENGTH;
+
+    col *= exposure;
 
     // night vision of the eye: dim light shifts towards a cool blue
     #ifdef OVERWORLD
+    float skyEye = float(eyeBrightnessSmooth.y) / 240.0;
+    float dayF = smoothstep(-0.12, 0.22, sunDirW().y);
     float dim = (1.0 - dayF) * skyEye * (1.0 - smoothstep(0.05, 0.6, luma(col)));
     float warm = saturate((col.r - col.b) / max(luma(col), 1e-4) * 0.9);   // torch / lava lit
     dim *= 1.0 - warm;
@@ -75,7 +74,39 @@ void main() {
     float mn = min(col.r, min(col.g, col.b));
     float vib = (VIBRANCE - 1.0) * (1.0 - (mx - mn));
     col = mix(vec3(luma(col)), col, 1.0 + vib);
-    col = saturate(col);
+    return saturate(col);
+}
+
+void main() {
+    vec2 px = 1.0 / vec2(viewWidth, viewHeight);
+    float exposure = getExposure();
+    vec3 col = graded(uv, exposure);
+
+    // Contrast Adaptive Sharpening (after AMD FidelityFX CAS, MIT): sharpens soft
+    // detail but backs off on edges that are already high-contrast, so it does not
+    // re-cut the stair-steps that FXAA/TAA smoothed
+    #if SHARPEN > 0
+    {
+        vec3 a = graded(uv + vec2(-px.x, -px.y), exposure);
+        vec3 b = graded(uv + vec2(  0.0, -px.y), exposure);
+        vec3 c = graded(uv + vec2( px.x, -px.y), exposure);
+        vec3 d = graded(uv + vec2(-px.x,   0.0), exposure);
+        vec3 f = graded(uv + vec2( px.x,   0.0), exposure);
+        vec3 g = graded(uv + vec2(-px.x,  px.y), exposure);
+        vec3 h = graded(uv + vec2(  0.0,  px.y), exposure);
+        vec3 i = graded(uv + vec2( px.x,  px.y), exposure);
+
+        vec3 mnRGB = min(min(min(d, col), min(f, b)), h);
+        vec3 mxRGB = max(max(max(d, col), max(f, b)), h);
+        mnRGB += min(mnRGB, min(min(a, c), min(g, i)));
+        mxRGB += max(mxRGB, max(max(a, c), max(g, i)));
+
+        vec3 amp = sqrt(saturate(min(mnRGB, 2.0 - mxRGB) / max(mxRGB, 1e-4)));
+        float peak = -1.0 / mix(8.0, 5.0, float(SHARPEN) * 0.01);
+        vec3 wgt = amp * peak;
+        col = saturate(((b + d + f + h) * wgt + col) / (1.0 + 4.0 * wgt));
+    }
+    #endif
 
     // vignette
     vec2 vc = uv - 0.5;
