@@ -8,6 +8,21 @@ a smoky Nether lit by its lava sea, and an End that is a dark void under a livin
 
 **[Download the latest release](https://github.com/tenguterror/tengu-aurora/releases/latest)**
 
+## Screenshots
+
+All taken in-game during the release test pass (2560×1440, Faithful 32x).
+
+| | |
+|---|---|
+| ![Water at noon](docs/screenshots/water-noon.jpg) | ![Sunset over the water](docs/screenshots/sunset.jpg) |
+| **Water at noon** | **Late sunset** |
+| ![Aurora over ice spikes](docs/screenshots/aurora.jpg) | ![Rain puddles in a village](docs/screenshots/rain-puddles.jpg) |
+| **Aurora over ice spikes** | **Rain puddles** |
+| ![Nether lava sea and smoke](docs/screenshots/nether.jpg) | ![The End under the nebula](docs/screenshots/end.jpg) |
+| **Nether lava sea and smoke plumes** | **The End under the nebula** |
+| ![Underwater light rays](docs/screenshots/underwater.jpg) | ![A pitch-dark cave](docs/screenshots/cave.jpg) |
+| **Underwater light rays through kelp** | **A pitch-dark cave (glowing ores on)** |
+
 ---
 
 ## Install
@@ -34,7 +49,7 @@ Everything in this pack was tuned and checked in-game on this machine:
 | Mods | Fabric Loader 0.19.3 · Iris 1.11.1 · Sodium 0.9.0 |
 | Resource pack | Faithful 32x (CF32PA). The vanilla textures also work. |
 | Game settings | Render distance 32 · simulation distance 32 · biome blend 7 |
-| Shader profile | High (the default) |
+| Shader profiles | All four benchmarked (see Performance) |
 
 The test pass covered the overworld at noon, sunset, night with aurora, rain and underwater, plus
 pitch-dark caves, the Nether lava sea and the End main island. Each scene was screenshotted and
@@ -42,22 +57,39 @@ reviewed, and anything that looked wrong was fixed and re-shot.
 
 ---
 
-## Projected performance
+## Performance
 
-> **These numbers are estimates, not benchmarks.** No FPS was measured during development. The
-> figures are projected from the pack's per-frame cost: volumetric clouds, volumetric fog, a shadow
-> map, screen-space reflections and TAA all run every frame. They assume Sodium, render distance
-> 16–32 and the stated profile. Your results will vary with render distance, CPU, resolution and
-> driver. If you measure your own setup, open an issue and the table can be replaced with real data.
+### Measured on the dev rig
+
+Ryzen 7 9800X3D + RTX 5080, 2560 × 1440, **render distance 32**, Faithful 32x, v2.0.0.
+Readings from the in-game F3 overlay, hovering over a village with jungle and river in view.
+The active profile was confirmed in the Iris log before each run. Two samples were taken per scene.
+
+| Profile | Clear noon: FPS (p50 / p98) | Rainy sunset: FPS (p50 / p98) |
+|---|---|---|
+| Ultra | ~100 (94–95 / 60) | ~102 (101–104 / 58) |
+| High (default) | ~117 (118–121 / 71) | ~115 (109–120 / 67) |
+| Medium | ~134 (138–139 / 79) | ~127 (134 / 75–76) |
+| Low | ~145 (155–162 / 90) | ~138 (141–150 / 78–80) |
+
+p50 is the median frame rate. p98 is the rate that 98% of frames beat, which is a good measure of
+how smooth it feels. During the Ultra run the GPU sat at about 80% load (≈255 W), so render
+distance 32 also puts real load on the CPU. A lower render distance will raise every number above.
+
+### Projected for other setups
+
+> **These are estimates, not benchmarks.** They are scaled from the measured numbers above by
+> relative GPU speed and resolution, at render distance 16–24. Real results depend on your CPU,
+> driver and render distance. If you measure your own setup, open an issue and it can be added
+> as a measured row.
 
 | Setup | Resolution | Suggested profile | Projected FPS |
 |---|---|---|---|
-| RTX 5080 / RTX 4080 class (the dev rig) | 1440p | High / Ultra | 120 – 200+ |
-| RTX 5080 / RTX 4080 class | 4K | High | 60 – 100 |
-| RTX 4070 / RTX 3080 / RX 7800 XT | 1440p | High | 80 – 130 |
-| RTX 4060 / RTX 3060 / RX 6600 | 1080p | Medium | 60 – 90 |
-| GTX 1660 / RTX 2060 / RX 5600 XT | 1080p | Low | 40 – 60 |
-| Integrated graphics / older laptops | 720p–1080p | Low, clouds off | 20 – 40 (not recommended) |
+| RTX 5080 / RTX 4080 class | 4K | High | 50 – 70 |
+| RTX 4070 / RTX 3080 / RX 7800 XT | 1440p | High | 65 – 90 |
+| RTX 4060 / RTX 3060 / RX 6600 | 1080p | Medium | 60 – 85 |
+| GTX 1660 / RTX 2060 / RX 5600 XT | 1080p | Low | 35 – 55 |
+| Integrated graphics / older laptops | 720p–1080p | Low, clouds off | 15 – 30 (not recommended) |
 
 **What costs the most**, in order. Turn these down first if you need frames:
 
@@ -170,7 +202,8 @@ The development loop was:
 2. Every program is compiled on the real GPU (`tools/validate.py`) to catch errors before Iris does.
 3. The pack is built and loaded in game, and the Iris log is checked for errors.
 4. For the final test pass, Claude drove the game itself through computer use (teleports, time and
-   weather commands, in-game screenshots), reviewed every shot, and fixed what looked wrong.
+   weather commands, in-game screenshots), reviewed every shot, and fixed what looked wrong. The
+   performance numbers above were captured the same way.
 5. TenguTerror decided what shipped.
 
 Version history is in [CHANGELOG.md](CHANGELOG.md).
